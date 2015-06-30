@@ -19,10 +19,7 @@ public class RsaEncryptor {
     /**
      * 公钥字符串
      */
-    private static final String PUBLIC_KEY_STR = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDGG0B0e/zGnGJjk0oATB8Pewt7\n" +
-            "dzwxVWkzsx0LtnwH1PD4Ci1KYeKuSbDScLp8e2N6drop182qYU/lCRXcjy9BtbF3\n" +
-            "2kEbBvk6Q60JMBOZL2QZwNpVVeyP1CWNCUn7yBvVI3doSUMaYsq+1TWy0vhsqjcP\n" +
-            "mCI/KUbc7C6mt/lf/QIDAQAB";
+    private static final String PUBLIC_KEY_STR = "";
     private static Cipher ecipher;
 
     static {
