@@ -47,7 +47,7 @@ public class RsaEncryptor {
      */
     public static String encrypt(String str) {
         try {
-            return new String(Base64Utils.encode(doEncrypt(str.getBytes())));
+            return Base64Utils.encode(doEncrypt(str.getBytes()));
         } catch (Exception e) {
             return null;
         }
