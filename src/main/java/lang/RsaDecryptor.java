@@ -22,7 +22,7 @@ public class RsaDecryptor {
     static {
         try {
             PrivateKey privateKey = loadPrivateKey(PRIVATE_KEY_STR);
-            dcipher = Cipher.getInstance("RSA");
+            dcipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             dcipher.init(Cipher.DECRYPT_MODE, privateKey);
         } catch (Exception e) {
             e.printStackTrace();
