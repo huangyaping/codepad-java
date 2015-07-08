@@ -24,7 +24,7 @@ public class RsaEncryptor {
 
     static {
         try {
-            ecipher = Cipher.getInstance("RSA");
+            ecipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             PublicKey publicKey = loadPublicKey(PUBLIC_KEY_STR);
             ecipher.init(Cipher.ENCRYPT_MODE, publicKey);
         } catch (Exception e) {
