@@ -13,8 +13,10 @@ import java.security.spec.RSAPublicKeySpec;
 public class RsaMain {
     private static Cipher decryptCipher;
     private static Cipher encryptCipher;
+
     static {
         try {
+            genKey();
             PublicKey pubKey = readPubKeyFromFile("public.key");
             encryptCipher = Cipher.getInstance("RSA");
             encryptCipher.init(Cipher.ENCRYPT_MODE, pubKey);
@@ -23,7 +25,7 @@ public class RsaMain {
             decryptCipher = Cipher.getInstance("RSA");
             decryptCipher.init(Cipher.DECRYPT_MODE, priKey);
 
-        } catch (Exception e) {
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }
@@ -39,7 +41,7 @@ public class RsaMain {
         long s = System.currentTimeMillis();
         byte[] cipherData = decryptCipher.doFinal(data);
         long e = System.currentTimeMillis();
-        System.out.println("Decrypt cost:"+(e - s));
+        System.out.println("Decrypt cost:" + (e - s));
         return cipherData;
     }
 
@@ -47,7 +49,7 @@ public class RsaMain {
         long s = System.currentTimeMillis();
         byte[] cipherData = encryptCipher.doFinal(data);
         long e = System.currentTimeMillis();
-        System.out.println("Encrypt cost:"+(e - s));
+        System.out.println("Encrypt cost:" + (e - s));
         return cipherData;
     }
 
@@ -62,7 +64,7 @@ public class RsaMain {
             KeyFactory fact = KeyFactory.getInstance("RSA");
             PrivateKey privateKey = fact.generatePrivate(keySpec);
             return privateKey;
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw new RuntimeException("Spurious serialisation error", e);
         } finally {
             oin.close();
@@ -71,8 +73,7 @@ public class RsaMain {
 
     static PublicKey readPubKeyFromFile(String keyFileName) throws Exception {
         InputStream in = new FileInputStream("" + keyFileName);
-        ObjectInputStream oin =
-                new ObjectInputStream(new BufferedInputStream(in));
+        ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(in));
         try {
             BigInteger m = (BigInteger) oin.readObject();
             BigInteger e = (BigInteger) oin.readObject();
@@ -80,7 +81,7 @@ public class RsaMain {
             KeyFactory fact = KeyFactory.getInstance("RSA");
             PublicKey pubKey = fact.generatePublic(keySpec);
             return pubKey;
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw new RuntimeException("Spurious serialisation error", e);
         } finally {
             oin.close();
@@ -92,25 +93,19 @@ public class RsaMain {
         kpg.initialize(1024);
         KeyPair kp = kpg.genKeyPair();
         KeyFactory fact = KeyFactory.getInstance("RSA");
-        RSAPublicKeySpec pub = fact.getKeySpec(kp.getPublic(),
-                RSAPublicKeySpec.class);
-        RSAPrivateKeySpec priv = fact.getKeySpec(kp.getPrivate(),
-                RSAPrivateKeySpec.class);
+        RSAPublicKeySpec pub = fact.getKeySpec(kp.getPublic(), RSAPublicKeySpec.class);
+        RSAPrivateKeySpec priv = fact.getKeySpec(kp.getPrivate(), RSAPrivateKeySpec.class);
 
-        saveToFile("public.key", pub.getModulus(),
-                pub.getPublicExponent());
-        saveToFile("private.key", priv.getModulus(),
-                priv.getPrivateExponent());
+        saveToFile("public.key", pub.getModulus(), pub.getPublicExponent());
+        saveToFile("private.key", priv.getModulus(), priv.getPrivateExponent());
     }
 
-    public static void saveToFile(String fileName,
-                                  BigInteger mod, BigInteger exp) throws Exception {
-        ObjectOutputStream oout = new ObjectOutputStream(
-                new BufferedOutputStream(new FileOutputStream(fileName)));
+    public static void saveToFile(String fileName, BigInteger mod, BigInteger exp) throws Exception {
+        ObjectOutputStream oout = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fileName)));
         try {
             oout.writeObject(mod);
             oout.writeObject(exp);
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw new Exception("Unexpected error", e);
         } finally {
             oout.close();
