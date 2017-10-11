@@ -1,4 +1,4 @@
-package lang;
+package codec;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * RSA code.
@@ -37,7 +39,11 @@ public class RsaKit {
     private static final int MAX_ENCRYPT_BLOCK = 117;
 
     public static void main(String[] args) throws Exception {
+        String src = "ABCDEFGHIJKLMNOPURSTUVWXYZabcdefghijklmnopurstuvwxyz1234567890/*-+.`~|;:,%=!@#$^&_";
+
         String[] keyPairStr = genKeyPairStr();
+        System.out.println("PublicKeyStr="+keyPairStr[0]);
+        System.out.println("PrivateKeyStr="+keyPairStr[1]);
         PublicKey publicKey = loadPublicKey(keyPairStr[0]);
         PrivateKey privateKey = loadPrivateKey(keyPairStr[1]);
 
@@ -47,10 +53,6 @@ public class RsaKit {
         String msg = decryptByPrivateKey(encrypted, privateKey);
         System.out.println(msg);
 
-        encrypted = encryptByPrivateKey(message, privateKey);
-        System.out.println(encrypted);
-        msg = decryptByPublicKey(encrypted, publicKey);
-        System.out.println(msg);
     }
 
     public static String encryptByPublicKey(String message, PublicKey publicKey) throws Exception {
@@ -71,7 +73,7 @@ public class RsaKit {
             byte[] parts = cipher.doFinal(messageBytes, offSet, len);
             out.write(parts);
         }
-        return Base64Utils.encode(out.toByteArray());
+        return Base64.encodeBase64String(out.toByteArray());
     }
 
     public static String decryptByPrivateKey(String encrypted, PrivateKey privateKey) throws Exception {
@@ -82,7 +84,7 @@ public class RsaKit {
     }
 
     private static String doDecrypt(String encrypted, Cipher cipher) throws Exception {
-        byte[] encryptedBytes = Base64Utils.decode(encrypted);
+        byte[] encryptedBytes = Base64.decodeBase64(encrypted);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int inputLen = encryptedBytes.length;
         for(int offSet = 0; offSet < inputLen; offSet += MAX_DECRYPT_BLOCK) {
@@ -92,35 +94,23 @@ public class RsaKit {
         return new String(out.toByteArray());
     }
 
-    public static String encryptByPrivateKey(String message, PrivateKey privateKey) throws Exception {
-        Cipher cipher = Cipher.getInstance(KEY_ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-        return doEncrypt(message, cipher);
-    }
-
-    public static String decryptByPublicKey(String encrypted, PublicKey publicKey) throws Exception {
-        Cipher cipher = Cipher.getInstance(KEY_ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, publicKey);
-        return doDecrypt(encrypted, cipher);
-    }
-
     public static PublicKey loadPublicKey(String publicKeyStr) throws Exception {
-        byte[] buffer = Base64Utils.decode(publicKeyStr);
+        byte[] buffer = Base64.decodeBase64(publicKeyStr);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(buffer);
         return keyFactory.generatePublic(keySpec);
     }
 
     public static PrivateKey loadPrivateKey(String privateKeyStr) throws Exception {
-        byte[] buffer = Base64Utils.decode(privateKeyStr);
+        byte[] buffer = Base64.decodeBase64(privateKeyStr);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(buffer);
         return keyFactory.generatePrivate(keySpec);
     }
 
     /**
-     * Generate public/private key pair string.
-     *
+     * 生成公钥、私钥对的字符串形式。
+     * key保存在Base64字符串，公钥使用 X509EncodedKeySpec 编码 私钥使用 PKCS8EncodedKeySpec 编码。
      * @return
      * @throws Exception
      */
@@ -131,7 +121,7 @@ public class RsaKit {
 
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
-        return new String[]{Base64Utils.encode(publicKey.getEncoded()), Base64Utils.encode(privateKey.getEncoded())};
+        return new String[]{Base64.encodeBase64String(publicKey.getEncoded()), Base64.encodeBase64String(privateKey.getEncoded())};
     }
 
 }

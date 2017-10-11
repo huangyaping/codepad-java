@@ -1,4 +1,4 @@
-package lang;
+package codec;
 
 import javax.crypto.Cipher;
 import java.io.*;
@@ -10,7 +10,7 @@ import java.security.spec.RSAPublicKeySpec;
 /**
  * Java RSA API Demo.
  */
-public class RsaMain {
+public class RsaFile {
     private static Cipher decryptCipher;
     private static Cipher encryptCipher;
 
