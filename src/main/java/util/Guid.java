@@ -49,7 +49,7 @@ public class Guid {
     /**
      * 最大毫秒内自增序列
      */
-    private static final int MAX_SEQUENCE_ID = (1 << SEQUENCE_BITS) - 1;
+    private static final int MAX_SEQUENCE_ID = (1 << SEQUENCE_BITS);
     /**
      * 毫秒内自增序列
      */
@@ -72,7 +72,7 @@ public class Guid {
         id |= DC_ID << (GUID_BITS - TIMESTAMP_BITS - DC_ID_BITS);
         id |= WORKER_ID << (GUID_BITS - TIMESTAMP_BITS - DC_ID_BITS - WORKER_ID_BITS);
         int sequence = SEQUENCER.incrementAndGet();
-        if(SEQUENCER.get() > MAX_SEQUENCE_ID) {
+        if(SEQUENCER.get() >= MAX_SEQUENCE_ID) {
             // 毫秒内自增序列达到最大，则等待，直到下一毫秒
             while(MemoryClock.currentTimeMillis() == lastTimeMillis) ;
         }
